@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/namle133/gorm_gogin1.git/gorm_gogin/database"
 	"github.com/namle133/gorm_gogin1.git/gorm_gogin/http/decode"
 	"github.com/namle133/gorm_gogin1.git/gorm_gogin/http/encode"
 	"github.com/namle133/gorm_gogin1.git/gorm_gogin/service"
@@ -12,16 +13,17 @@ import (
 func main() {
 
 	router := gin.Default()
-	var P service.IProduct
+	p := service.Product{
+		Db: database.ConnectDatabase(),
+	}
+	var i service.IProduct = &p
 
 	router.POST("/create", func(context *gin.Context) {
 		it := decode.CreateBind(context)
-		fmt.Println("Hello, world!")
-		fmt.Println(it)
-		P.Create(it)
+		i.Create(it)
 	})
 	router.GET("/read", func(context *gin.Context) {
-		products, err := P.Read()
+		products, err := i.Read()
 		if err != nil {
 			context.JSON(400, http.StatusBadRequest)
 			return
@@ -30,7 +32,7 @@ func main() {
 	})
 	router.GET("/read/:id", func(context *gin.Context) {
 		id := decode.ReadOneBind(context)
-		item, err := P.ReadOne(id)
+		item, err := i.ReadOne(id)
 		if err != nil {
 			context.JSON(400, http.StatusBadRequest)
 			return
@@ -39,7 +41,7 @@ func main() {
 	})
 	router.DELETE("/delete/:id", func(context *gin.Context) {
 		id := decode.DeleteOneBind(context)
-		err := P.Delete(id)
+		err := i.Delete(id)
 		if err != nil {
 			context.JSON(400, http.StatusBadRequest)
 			return
@@ -49,7 +51,8 @@ func main() {
 	})
 	router.PUT("/update/:id", func(context *gin.Context) {
 		id, price := decode.UpdateOneBind(context)
-		err := P.Update(id, price)
+		fmt.Println(id, price)
+		err := i.Update(id, price)
 		if err != nil {
 			context.JSON(400, http.StatusBadRequest)
 			return

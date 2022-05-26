@@ -2,48 +2,44 @@ package service
 
 import (
 	"fmt"
-	"github.com/namle133/gorm_gogin1.git/gorm_gogin/database"
 	"github.com/namle133/gorm_gogin1.git/gorm_gogin/domain"
 	"gorm.io/gorm"
 )
 
-type product struct {
-	db *gorm.DB
+type Product struct {
+	Db *gorm.DB
 }
 
-func Connect(db *gorm.DB) *product {
-	p := &product{
-		db: database.ConnectDatabase(),
+func (p *Product) ReadOne(id string) (*domain.Product, error) {
+	var item *domain.Product
+	err := p.Db.First(&item, "code = ?", id).Error
+	if err != nil {
+		return nil, err
 	}
-	return p
+	return item, nil
+
 }
 
-func (p *product) Create(item *domain.Product) error {
-	fmt.Println("sfsdf")
-	//p = &product{
-	//	db: database.ConnectDatabase(),
-	//}
-	//fmt.Println(p)
-	p.db = database.ConnectDatabase()
-	err := p.db.Create(item).Error
+func (p *Product) Create(item *domain.Product) error {
+	err := p.Db.Create(item).Error
 	if err != nil {
 		fmt.Println(err)
 	}
 	return nil
 }
 
-func (p *product) Read() ([]domain.Product, error) {
+func (p *Product) Read() ([]domain.Product, error) {
 	var products []domain.Product
-	err := p.db.Find(&products).Error
+	err := p.Db.Find(&products).Error
 	if err != nil {
 		return nil, err
 	}
 	return products, nil
 }
 
-func (p *product) Delete(id string) error {
+func (p *Product) Delete(id string) error {
 	var item *domain.Product
-	err := p.db.Where("code = ?", id).Delete(&item).Error
+	err := p.Db.Where("code = ?", id).Delete(&item).Error
 	if err != nil {
 		return err
 	}
@@ -51,9 +47,9 @@ func (p *product) Delete(id string) error {
 
 }
 
-func (p *product) Update(id string, price int) error {
+func (p *Product) Update(id string, price int) error {
 	var item *domain.Product
-	err := p.db.Model(&item).Where("code = ?", id).Update("price", price).Error
+	err := p.Db.Model(&item).Where("code = ?", id).Update("price", price).Error
 	fmt.Println(err)
 	fmt.Println(id)
 	fmt.Println(price)

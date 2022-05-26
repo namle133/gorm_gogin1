@@ -19,5 +19,5 @@ func DeleteIndented(c *gin.Context, id string) {
 }
 
 func UpdateIndented(c *gin.Context, id string) {
-	c.String(http.StatusOK, "Deleted product with code = %s", id)
+	c.String(http.StatusOK, "Updated product with code = %s", id)
 }
