@@ -11,12 +11,6 @@ type product struct {
 	db *gorm.DB
 }
 
-func Connect(db *gorm.DB) *product {
-	p := &product{
-		db: database.ConnectDatabase(),
-	}
-	return p
-}
 
 func (p *product) Create(item *domain.Product) error {
 	fmt.Println("sfsdf")
